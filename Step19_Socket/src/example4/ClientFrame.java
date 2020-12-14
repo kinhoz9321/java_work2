@@ -82,7 +82,10 @@ public class ClientFrame extends JFrame implements ActionListener{
 		tf.setText("");
 	}
 }
-
+/* 
+ * 서버 메인 실행하고, 클라이언트 메인 실행해서 문자열 입력.
+ * 콘솔창에 "안녕 클라이언트 난 서버야" 출력되면 성공
+ */
 
 
 
