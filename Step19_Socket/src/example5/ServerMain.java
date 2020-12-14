@@ -103,7 +103,7 @@ public class ServerMain {
 				//반복문 돌면서 클라이언트가 전송하는 문자열이 있는지 읽어와 본다.
 				while(true) {
 					//문자열 한줄이 전송될 때 까지 블록킹 되는 메소드
-					String line=br.readLine();//접속한 클라이언트의 갯수만큼 생성될 예정.(갯수만큼 있다.) 클라이언트가 전송한 문자열을 읽어와서
+					String line=br.readLine();//접속한 클라이언트의 갯수만큼 생성될 예정.(갯수만큼 있다.) 클라이언트가 전송한 문자열을 읽어와서. 누군가 나가면 이곳에서 익셉션이 발생!
 					//반복문 돌면서 모든 클라이언트에게 전송하기. 어떤 클라이언트가 문자를 보내면 모든 클라이언트에게 중계를 하겠다.
 					for(ServerThread tmp:threadList) { // *확장 for문 확실히 알기 분석!*
 						tmp.broadcast(line);
@@ -111,10 +111,20 @@ public class ServerMain {
 					
 				}
 			}catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(); //익셉션 발생 뛰어넘고.
+			}finally {
+				try {
+					socket.close(); //소켓 클로즈
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-	}
+			//현재 여기에 실행순서가 넘어온 스레드의 참조값은? this 로 참조가 가능하다
+			
+			//오류가 나거나 접속 종료된 스레드는 목록에서 제거 해야한다.
+			threadList.remove(this);//오류난 지점이 현재 스레드이기 때문에 this
+		}//run()
+	}//class ServerThread
 }
 /* 
  * heap 영역에 스레드가 여러개 생김. 클라이언트가 들어온 만큼...
